@@ -31,7 +31,7 @@ class MyBot(commands.Bot):
     def __init__(self, *args , **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.ipc = ipc.Server(self,port=80, host="http://3.85.53.85/", secret_key= "JATIN", do_multicast=False)
+        self.ipc = ipc.Server(self,port=8080, host="http://52.3.231.173/", secret_key= "JATIN", do_multicast=False)
 
 
 
