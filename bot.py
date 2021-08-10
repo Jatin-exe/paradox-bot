@@ -24,36 +24,70 @@ def get_prefix(client, message):
 
 
 
-
-
 class MyBot(commands.Bot):
 
     def __init__(self, *args , **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.ipc = ipc.Server(self,port=8080, host="http://52.3.231.173/", secret_key= "JATIN", do_multicast=False)
-
+        self.ipc = ipc.Server(self, host="0.0.0.0", secret_key= "JATIN") #52.3.231.173
 
 
     async def on_ipc_ready(self):
         """Called upon the IPC Server being ready"""
         print("IPC SERVER IS READY!")
+        
 
     async def on_ipc_error(self, endpoint, error):
         """Called upon an ERROR being raised within an IPC Route"""
         print(endpoint, "raised", error)
 
-
-        
+    async def on_ready(self):
+      """ON BOT READY!"""
+      print("YO")
 
 client = MyBot(command_prefix = get_prefix, intents= discord.Intents.all())
-
-
-
-
 client.remove_command('help')
 
-#TRACEBACK REPORTING 
+
+
+
+
+"""@client.ipc.route()
+async def get_guild_count(data):
+  print(client.guilds)
+  return len(client.guilds)
+
+
+@client.ipc.route()
+async def get_guild_ids(data):
+  print("guilds_here")
+  final = []
+  for guild in client.guilds:
+      final.append(guild.id)
+  return final
+
+
+@client.ipc.route()
+async def get_guild(data)
+"""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+"""#TRACEBACK REPORTING 
 @client.event
 async def on_error(error, *args):
   channels = ["865656861034020944", "865221771966677042"] 
@@ -73,13 +107,11 @@ async def on_error(error, *args):
       await send_channel.send(embed=traceback_embed)
       await send_channel.send(args)
     
-  
+  """
 
 
 
-@client.event
-async def on_ready():
-  print("Yo")
+
 
 #PRESENCE CHANGES
 async def ch_pr():
@@ -158,8 +190,11 @@ async def botlogout(ctx):
   await client.logout()
   
 
+
+
+
 if __name__ == '__main__':
-  for cog in os.listdir("./cogs"):
+  for cog in os.listdir("cogs"):
     if cog.endswith(".py"):
       try:
         cog = f"cogs.{cog.replace('.py', '')}"
