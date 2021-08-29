@@ -1,26 +1,18 @@
 import discord 
 from discord.ext import commands
 import random
-from discord.ext.commands.core import check
 from pymongo import MongoClient
-from pymongo.message import delete
 import asyncio
 import datetime
-cluster = MongoClient("mongodb+srv://db:databaseuser@paradox.n7mew.mongodb.net/paradox?retryWrites=true&w=majority")
 
 
+from dotenv import dotenv_values
+VALUES = dotenv_values("paradox-bot/venv/.env")
+cluster = MongoClient(VALUES["DB_URI"])
 
+from core import *
 
 #obj orienttednt sel.attributes
-def get_prefix(message):
-
-  db = cluster["paradox"]
-  g_configs = db["guild_configs"]
-  prefixes = g_configs.find_one({"_id": message.guild.id})
-  if prefixes is None:
-    return "."
-  return prefixes["prefix"] #what if preifx is list or something ? give only one or what  #client .user objecet store prefix in selff.prefix how ?
-  
 
 
 class fun(commands.Cog):
@@ -34,6 +26,7 @@ class fun(commands.Cog):
 
 
   @commands.Cog.listener()
+  @commands.check(no_dm)
   async def on_message(self, message):
     db = cluster["paradox"]
     afk = db["afk"]
@@ -53,7 +46,7 @@ class fun(commands.Cog):
                   embed.set_footer(text= f"Mentioned by {message.author.name}")
                   await message.channel.send(embed = embed, delete_after= 7)
 
-    g_prefix = get_prefix(message)
+    g_prefix = await get_prefix(message)
 
     if message.content.startswith("."):
       return

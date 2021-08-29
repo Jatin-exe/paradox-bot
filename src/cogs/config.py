@@ -1,15 +1,13 @@
 import discord 
 from discord.ext import commands
-import json
 import asyncio
 from pymongo import MongoClient
 
 
+from dotenv import dotenv_values
+VALUES = dotenv_values("paradox-bot/venv/.env")
+cluster = MongoClient(VALUES["DB_URI"])
 
-
-
-
-cluster = MongoClient("mongodb+srv://db:databaseuser@paradox.n7mew.mongodb.net/paradox?retryWrites=true&w=majority")
 
 
 db = cluster["paradox"]
@@ -21,7 +19,15 @@ channels = ["No_Xp_Channels","Mute_Channel", "Suggestion_Channel", "Starboard_Ch
 roles = ["Mod_Role", "Admin_Role", "Muted_Role"]
 
 
-
+"""ON GULD JOIN
+            level_reward_action = [
+            (10, "725738661676711986", {}),
+            (20, "725738798654423101", {}),
+            (30, "726005744905879562", {}),
+            (40, "726005945716703245", {}),   
+            (50, "817383614357438504", {})
+        ]
+"""
 class config(commands.Cog):
   """Change the Configuration of the bot"""
   def __init__(self, client):
@@ -29,7 +35,14 @@ class config(commands.Cog):
 
 
 
+  """@commands.command(aliases="xprate")
+  @commands.has_permission(manage_guild = True)
+  async def xp_rate(self,ctx, xp_rate):
+    
 
+    self.client.get_command('')
+    ctx.getcommand()
+    ctx.invoke("update gulid_configs")"""
 
       
 #SETUP ON GUILD JOIN

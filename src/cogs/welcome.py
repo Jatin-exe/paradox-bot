@@ -1,9 +1,11 @@
 import discord
 from discord.ext import commands
 from pymongo import MongoClient
-from pymongo.database import SystemJS
 
-cluster = MongoClient("mongodb+srv://db:databaseuser@paradox.n7mew.mongodb.net/paradox?retryWrites=true&w=majority")
+
+from dotenv import dotenv_values
+VALUES = dotenv_values("paradox-bot/venv/.env")
+cluster = MongoClient(VALUES["DB_URI"])
 
 db = cluster["paradox"]
 w_data = db["welcome_data"]

@@ -7,7 +7,7 @@ from discord.ext import commands
 #a way to make the help embed as easy as possible using ai and ml
 #dashboard intgration
 
-
+#DOCS PAGE
 
 class help(commands.Cog):
   """Shows this Page!"""
@@ -19,9 +19,9 @@ class help(commands.Cog):
   async def helpme(self, ctx, *cog):
     if not cog:
       cog_desc = ''
-      embed = discord.Embed(color = 0x00ff00)
+      embed = discord.Embed(color = 0x00afff)
       for x in self.client.cogs:
-        if x != "help" and "levelingsys" and "bot_stuff":
+        if x != "help" or "levelingsys" or "bot_stuff":
           cog_desc += f"**{x.capitalize()}** - {self.client.cogs[x].__doc__.capitalize()}\n\n"
       value = f"\n\n{cog_desc[0:len(cog_desc)-1]}"    
       embed.add_field(name= 'Commands list',value = value ,

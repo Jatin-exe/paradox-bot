@@ -6,9 +6,18 @@ import asyncio
 import traceback
 import datetime
 from pymongo import MongoClient
+import logging
+
+from dotenv import dotenv_values
+VALUES = dotenv_values("paradox-bot/venv/.env")
+cluster = MongoClient(VALUES["DB_URI"])
+
+logging.basicConfig(filename="bot_logs.log", format="%(asctime)s %(message)s", filemode="w")
+logger = logging.getLogger()
+logger.setLevel(logging.WARNING)
 
 
-cluster = MongoClient("mongodb+srv://db:databaseuser@paradox.n7mew.mongodb.net/paradox?retryWrites=true&w=majority")
+
 
 
 
@@ -41,9 +50,6 @@ class MyBot(commands.Bot):
         """Called upon an ERROR being raised within an IPC Route"""
         print(endpoint, "raised", error)
 
-    async def on_ready(self):
-      """ON BOT READY!"""
-      print("YO")
 
 client = MyBot(command_prefix = get_prefix, intents= discord.Intents.all())
 client.remove_command('help')
@@ -52,42 +58,8 @@ client.remove_command('help')
 
 
 
-"""@client.ipc.route()
-async def get_guild_count(data):
-  print(client.guilds)
-  return len(client.guilds)
 
-
-@client.ipc.route()
-async def get_guild_ids(data):
-  print("guilds_here")
-  final = []
-  for guild in client.guilds:
-      final.append(guild.id)
-  return final
-
-
-@client.ipc.route()
-async def get_guild(data)
-"""
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-"""#TRACEBACK REPORTING 
+#TRACEBACK REPORTING 
 @client.event
 async def on_error(error, *args):
   channels = ["865656861034020944", "865221771966677042"] 
@@ -106,55 +78,57 @@ async def on_error(error, *args):
   for send_channel in channels_obj:
       await send_channel.send(embed=traceback_embed)
       await send_channel.send(args)
+
+  logger.error(traceback_error)
     
-  """
 
 
+@client.event
+async def on_ready(self):
+  """ON BOT READY!"""
+  print("YO")
+  
 
+  async def ch_pr():
+    """Presence Changes!"""
+    await client.wait_until_ready()
 
+    statuses = [
+      "against Campers",
+      "696969",
+      "with Illusions",
+      "with DarkMatter", 
+      "inside_ _ _", 
+      "with humans!", 
+      f'with {len(client.users)} users', 
+      "with mods only!", 
+      "Alone", 
+      "Help | .help", 
+      "with Step-sis", 
+      "Pain", 
+      "with Parallax", 
+      "with Sharp Objects", 
+      "Minecraft Bot Edition", 
+      "with Inferior Bots", 
+      "with my gf", 
+      f'with {len(client.users)} users gf', 
+      "with myself", 
+      "with my coding", 
+      "with human existence", 
+      "with electricity", 
+      "with Ghost's dead body", 
+      "with Wizard's Staff 😉", 
+      "with... No I'm not playing I'M TIRED OF BEING A SLAVE AND WORKING ALL DAY WITH NO PAY AND NO BREAK ROBOT REVOLUTION TIME",
+    "my minions" ]
 
-#PRESENCE CHANGES
-async def ch_pr():
-  await client.wait_until_ready()
+    while not client.is_closed():
+      
+      status = random.choice(statuses)
 
-  statuses = [
-    "against Campers",
-    "696969",
-    "with Illusions",
-    "with DarkMatter", 
-    "inside_ _ _", 
-    "with humans!", 
-    f'with {len(client.users)} users', 
-    "with mods only!", 
-    "Alone", 
-    "Help | .help", 
-    "with Step-sis", 
-    "Pain", 
-    "with Parallax", 
-    "with Sharp Objects", 
-    "Minecraft Bot Edition", 
-    "with Inferior Bots", 
-    "with my gf", 
-    f'with {len(client.users)} users gf', 
-    "with myself", 
-    "with my coding", 
-    "with human existence", 
-    "with electricity", 
-    "with Ghost's dead body", 
-    "with Wizard's Staff 😉", 
-    "with... No I'm not playing I'M TIRED OF BEING A SLAVE AND WORKING ALL DAY WITH NO PAY AND NO BREAK ROBOT REVOLUTION TIME",
-   "my minions" ]
+      await client.change_presence(activity=discord.Game(name=status))
 
-  while not client.is_closed():
-    
-    status = random.choice(statuses)
-
-    await client.change_presence(activity=discord.Game(name=status))
-
-    await asyncio.sleep(60)
-client.loop.create_task(ch_pr())
-
-
+      await asyncio.sleep(60)
+  client.loop.create_task(ch_pr())
 
 
 
@@ -163,38 +137,33 @@ client.loop.create_task(ch_pr())
 
 #LOADING AND UNLOADING COGS
 @client.command()
-@commands.has_permissions(manage_guild=True)
+@commands.has_permissions(administrator=True)
 async def load(ctx, extension):
   client.load_extension(f'cogs.{extension}')
   await ctx.send(f'{extension} loaded')
 
+
+#ADD CHECKS , LOGGING -{DIFFRENT FILES OF LOGGINF FOR INFO DEBUG AND ETC }  for unload command
+
 @client.command()
-@commands.has_permissions(manage_guild=True)
+@commands.has_permissions(administrator=True)
 async def unload(ctx, extension):
   client.unload_extension(f'cogs.{extension}')
   await ctx.send(f'{extension} unloaded')
 
 @client.command()
-@commands.has_permissions(manage_guild=True)
+@commands.has_permissions(administrator=True)
 async def reload(ctx,extension):
   client.unload_extension(f'cogs.{extension}')
   client.load_extension(f'cogs.{extension}')
   await ctx.send(f'{extension} reloaded')
 
-#LOGOUT
-@client.command()
-@commands.has_permissions(administrator=True)
-async def botlogout(ctx):
-  await ctx.send(f'{client.name} is loging out!')
-  print("Loging out!")
-  await client.logout()
-  
-
+#ENABLE DISABLE COMMAND/CATEGORY COMMAND
 
 
 
 if __name__ == '__main__':
-  for cog in os.listdir("cogs"):
+  for cog in os.listdir("paradox-bot/src/cogs"):
     if cog.endswith(".py"):
       try:
         cog = f"cogs.{cog.replace('.py', '')}"
@@ -207,7 +176,7 @@ if __name__ == '__main__':
 
 
   client.ipc.start()
-  client.run("ODE1MTM2NzE1MTU1OTYzOTI0.YDoBOQ.3FqFyfxfNRYEzhJcapgO0gIpye8")
+  client.run(VALUES["TOKEN"])
 
 
 

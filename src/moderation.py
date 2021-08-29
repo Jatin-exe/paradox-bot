@@ -25,8 +25,9 @@ def convert_time(time):
   return val * time_dict[unit]
 
 
-
-cluster = MongoClient("mongodb+srv://db:databaseuser@paradox.n7mew.mongodb.net/paradox?retryWrites=true&w=majority")
+from dotenv import dotenv_values
+VALUES = dotenv_values("paradox-bot/venv/.env")
+cluster = MongoClient(VALUES["DB_URI"])
 
 
 def check_high(mod, member):  
@@ -40,7 +41,9 @@ class moderation(commands.Cog):
 
 
 #IGNORE COMMAND 
+HAB TO DO THIS
 
+ON GUILD JOIN IN CONFIG
   @commands.Cog.listener()
   async def on_message(self, message):
     if message.channel == media_channel:
@@ -429,7 +432,34 @@ class moderation(commands.Cog):
     
   
 
-# MOD HELP 
+
+
+
+#----------------------------------------------------------------------
+def setup(client):
+  client.add_cog(moderation(client))
+
+
+
+
+
+  # Case Id 
+  #mute - Mute all channels - setup mute channel and mute role 
+
+  #unmute
+  # 
+  # Help for mods and Setup
+  # better Rank and leaderboard ui 
+  # slow mode - per min a partuciula no of xp (leveling )/ XP rate 
+  # slow mode for commands 
+
+
+
+
+
+
+
+  # MOD HELP 
 
 # {PREFIX} KICK 
 # .BAN 
@@ -460,23 +490,3 @@ class moderation(commands.Cog):
 # - IF HTEY WNAT THEY CAN SEE THE ADV COMMMANDS AND THEN THERE WILL BE LITERALLY NO NEED OF A CUSTOM BOT BEING MADE IT WILL  BE SO ADV THAT HUMANN MIDN SHOULD NOT BE BLE TO COMPREHEAND 
 # - RESET BUTTON IF THEY MESS UP THE ADV COMMANDS AND FEATURES
 
-
-
-
-#----------------------------------------------------------------------
-def setup(client):
-  client.add_cog(moderation(client))
-
-
-
-
-
-  # Case Id 
-  #mute - Mute all channels - setup mute channel and mute role 
-
-  #unmute
-  # 
-  # Help for mods and Setup
-  # better Rank and leaderboard ui 
-  # slow mode - per min a partuciula no of xp (leveling )/ XP rate 
-  # slow mode for commands 

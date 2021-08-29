@@ -4,41 +4,12 @@ import asyncio
 import random
 import datetime
 from pymongo import MongoClient
-#from main import get_prefix #how to do this? imports and modulesand files shit
 
+from core import *
 
-
-
-cluster = MongoClient("mongodb+srv://db:databaseuser@paradox.n7mew.mongodb.net/paradox?retryWrites=true&w=majority")
-
-
-def convert_time(time):
-
-  pos = ["s", "m", "h", "d"]
-
-  time_dict = {"s" : 1, "m" : 60, "h" : 3600, "d" : 3600 * 24}
-
-  unit = time[-1]
-
-  if unit.lower() not in pos:
-    return -1
-
-  try : 
-    val = int(time[:-1])
-  except:
-    return -2
-  
-  return val * time_dict[unit]
-
-
-def get_prefix(message):
-
-  db = cluster["paradox"]
-  g_configs = db["guild_configs"]
-  prefixes = g_configs.find_one({"_id": message.guild.id})
-
-  return prefixes["prefix"]
-
+from dotenv import dotenv_values
+VALUES = dotenv_values("paradox-bot/venv/.env")
+cluster = MongoClient(VALUES["DB_URI"])
 
 
 class giveaways(commands.Cog):
@@ -49,10 +20,9 @@ class giveaways(commands.Cog):
 
   @commands.command()
   async def gstart(self, ctx, time=None, *, prize:str=None):
-
     """Start a Quick Simple Giveaway"""
 
-    da_prefix = get_prefix(ctx.message)
+    da_prefix = await get_prefix(ctx.message)
 
     error_embed = discord.Embed(color = ctx.author.color)
     if not time:

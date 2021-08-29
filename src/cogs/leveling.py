@@ -5,9 +5,9 @@ from pymongo import MongoClient
 import asyncio
 import typing
 
-cluster = MongoClient("mongodb+srv://db:databaseuser@paradox.n7mew.mongodb.net/paradox?retryWrites=true&w=majority")
-
-
+from dotenv import dotenv_values
+VALUES = dotenv_values("paradox-bot/venv/.env")
+cluster = MongoClient(VALUES["DB_URI"])
 
 
 
@@ -17,8 +17,9 @@ class levels(commands.Cog):
     self.client = client
     self._cd = commands.CooldownMapping.from_cooldown(1, 60, commands.BucketType.user) # Change accordingly
     
-
-
+  @commands.command()
+  async def xp_rate(self, ctx, xp_rate):
+    return 
 
 #Custom help commands
   @commands.command(aliases=["levelsetup", "setupleveling"])
@@ -65,7 +66,7 @@ class levels(commands.Cog):
         return
       else:
         if i == 0:
-          if len(msg.channel_mentions) is 0:
+          if len(msg.channel_mentions) == 0:
             ans_leveling_parameters.append("None")
           else:
             ans_leveling_parameters.append(msg.channel_mentions)
@@ -138,8 +139,8 @@ class levels(commands.Cog):
         "_id": ctx.guild.id,
         "prefix": ".",
         "roles": {},
-        "channels": {"no_xp_channels": no_xp_channels},
-        "leveling": {"level_roles_at": level_roles_at,"xp_rate": xp_rate, "level_roles_id": level_roles_id},
+        "channels": {},
+        "leveling": {"no_xp_channels": no_xp_channels, "no_xp_roles":{} ,"level_roles_at": level_roles_at,"xp_rate": xp_rate, "level_roles_id": level_roles_id},
         "moderation": {},
       }
       g_configs.insert_one(old_configs)
@@ -148,8 +149,9 @@ class levels(commands.Cog):
       old_configs["leveling"] = {
         "level_roles_at": level_roles_at,
         "xp_rate": xp_rate,
+        "no_xp_roles": {},
+        "no_xp_channels": no_xp_channels
         }
-      old_configs["channels"]["no_xp_channels"] = no_xp_channels
 
       g_configs.replace_one({"_id": ctx.guild.id}, old_configs)
 
@@ -189,7 +191,8 @@ class levels(commands.Cog):
             level_roles = g_configs["leveling"]["level_roles_id"]
             level_num = g_configs["leveling"]["level_roles_at"]                           #[10,20,30,40,50]
             xp_rate = float(g_configs["leveling"]["xp_rate"])
-            no_xp_channels = g_configs["channels"]["no_xp_channels"]
+            no_xp_channels = g_configs["leveling"]["no_xp_channels"]
+            no_xp_roles = g_configs['leveling']['no_xp_roles']
           
           else:
             return
@@ -354,7 +357,7 @@ class levels(commands.Cog):
 
 
   
-
+#Level.Config Edit msg when changed
 #Custom help commands
   @commands.command(aliases=["level.config", "leveling.config", "levels.config"])
   @commands.cooldown(2, 200, BucketType.user)
